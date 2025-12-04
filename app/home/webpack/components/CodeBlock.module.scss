@@ -1,0 +1,109 @@
+.codeBlock {
+  position: relative;
+  margin: 0.16rem 0;
+  border-radius: 0.08rem;
+  overflow: hidden;
+  background: var(--code-bg, #2d2d2d); // 调亮背景色，原为 #1e1e1e
+  box-shadow: 0 0.02rem 0.08rem rgba(0, 0, 0, 0.2);
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.06rem 0.12rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 0.01rem solid rgba(255, 255, 255, 0.1);
+
+    .language {
+      font-size: 0.12rem;
+      color: rgba(255, 255, 255, 0.7);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.005rem;
+    }
+
+    .copyButton {
+      display: flex;
+      align-items: center;
+      gap: 0.06rem;
+      padding: 0.05rem 0.1rem;
+      border: none;
+      border-radius: 0.04rem;
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.12rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+
+      svg {
+        flex-shrink: 0;
+      }
+    }
+  }
+
+  .pre {
+    margin: 0;
+    padding: 0; // 移除 padding，因为 hljs 会添加
+    overflow-x: auto;
+    font-size: 0.13rem;
+    line-height: 1.6;
+
+    code {
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      background: none;
+      padding: 0.12rem; // 重新添加 padding 到 code 元素
+      display: block; // 确保 code 块级显示以应用 padding
+      
+      // 强制覆盖 hljs 的标点符号颜色，提高对比度
+      // 使用 :global(.className) 语法以避免 CSS Modules 解析错误
+      :global(.hljs-subst),
+      :global(.hljs-params) {
+        color: #e0e0e0 !important;
+      }
+
+      // 针对具体的标点符号（如果 hljs 主题没有覆盖到）
+      // 针对具体的标点符号（如果 hljs 主题没有覆盖到）
+      :global(span[class*="punctuation"]),
+      :global(span[class*="bracket"]),
+      :global(span[class*="brace"]),
+      :global(span[class*="tag"]),
+      :global(span[class*="operator"]),
+      :global(.hljs-tag .hljs-name),
+      :global(.hljs-tag),
+      :global(.hljs-attr) {
+        color: #e0e0e0 !important;
+      }
+
+      // 特别针对 < > / = 等符号
+      :global(.hljs-tag) {
+        color: #e0e0e0 !important;
+        
+        // 标签名保持原有颜色或微调
+        :global(.hljs-name) {
+          color: #ff7b72 !important; // 类似于 GitHub Dark 的标签名颜色
+        }
+        
+        // 属性名
+        :global(.hljs-attr) {
+          color: #79c0ff !important; // 类似于 GitHub Dark 的属性名颜色
+        }
+        
+        // 属性值
+        :global(.hljs-string) {
+          color: #a5d6ff !important; // 类似于 GitHub Dark 的字符串颜色
+        }
+      }
+      
+      // 提高基础文本颜色亮度
+      color: #e0e0e0;
+    }
+  }
+}
