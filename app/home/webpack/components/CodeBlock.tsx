@@ -1,87 +1,78 @@
-'use client';
+// components/CodeBlock.tsx
+"use client"; // ✅ 必须标记为客户端组件
 
-import { useState, useEffect, useRef, memo } from 'react';
-import hljs from 'highlight.js';
-import styles from './CodeBlock.module.scss';
+import { useState } from "react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
+import styles from "./CodeBlock.module.scss"; // 下一步我们会创建这个样式文件
 
 interface CodeBlockProps {
-  children: string;
-  className?: string;
+  node?: any;
   inline?: boolean;
+  className?: string;
+  children?: React.ReactNode;
 }
 
-const CodeBlock = memo(function CodeBlock({ children, className, inline }: CodeBlockProps) {
-  const [copied, setCopied] = useState(false);
-  const codeRef = useRef<HTMLElement>(null);
+export default function CodeBlock({
+  inline,
+  className,
+  children,
+  ...props
+}: CodeBlockProps) {
+  const [isCopied, setIsCopied] = useState(false);
 
-  // 从 className 中提取语言类型
-  // 处理类似 "language-js{17-20}" 或 "language-:no-line-numbers" 的情况
-  const match = /language-(\w+)/.exec(className || '');
-  const language = match ? match[1] : '';
-
-  // 增强判断：如果是行内代码，或者（没有指定语言且内容是单行），则视为行内代码
-  // 这可以防止一些短的行内代码被误渲染为代码块
-  const isSingleLine = !children.includes('\n');
-  const isInline = inline || (!language && isSingleLine);
-
-  // 执行代码高亮
-  useEffect(() => {
-    if (codeRef.current && !isInline) {
-      // 清除之前的属性，避免重复高亮导致的问题
-      codeRef.current.removeAttribute('data-highlighted');
-      hljs.highlightElement(codeRef.current);
-    }
-  }, [children, language, isInline]);
-
-  // 如果是行内代码，直接返回 <code> 标签
-  if (isInline) {
-    return <code className={className}>{children}</code>;
+  // 1. 如果是内联代码，直接渲染普通 code 标签
+  if (inline) {
+    return (
+      <code className={className} {...props}>
+        {children}
+      </code>
+    );
   }
 
+  // 2. 解析语言逻辑 (从你原来的代码移动到这里)
+  const match = /language-(\S+)/.exec(className || "");
+  let lang = match ? match[1] : "text";
+  if (lang) {
+    lang = lang.replace(/[:{].*/, "");
+  }
+
+  // 3. 获取代码文本
+  const codeString = String(children).replace(/\n$/, "");
+
+  // 4. 复制代码的函数
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(children);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      await navigator.clipboard.writeText(codeString);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000); // 2秒后恢复
     } catch (err) {
-      console.error('复制失败:', err);
+      console.error("Failed to copy!", err);
     }
   };
 
   return (
-    <div className={styles.codeBlock}>
-      <div className={styles.header}>
-        <span className={styles.language}>{language || 'TEXT'}</span>
-        <button
-          className={styles.copyButton}
-          onClick={handleCopy}
-          aria-label="复制代码"
-        >
-          {copied ? (
-            <svg viewBox="0 0 24 24" width="16" height="16">
-              <path
-                fill="currentColor"
-                d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"
-              />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 24 24" width="16" height="16">
-              <path
-                fill="currentColor"
-                d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"
-              />
-            </svg>
-          )}
-          <span>{copied ? '已复制' : '复制'}</span>
-        </button>
-      </div>
-      <pre className={styles.pre}>
-        <code ref={codeRef} className={`hljs ${language ? `language-${language}` : ''}`}>
-          {children}
-        </code>
-      </pre>
+    <div className={styles.codeBlockWrapper}>
+      {/* 复制按钮 */}
+      <button
+        onClick={handleCopy}
+        className={styles.copyButton}
+        aria-label="Copy code"
+      >
+        {isCopied ? "Copied! ✅" : "Copy 📋"}
+      </button>
+
+      {/* 高亮组件 */}
+      <SyntaxHighlighter
+        {...props}
+        style={dracula}
+        language={lang}
+        PreTag="div"
+        // 稍微调整一下样式，给右上角的按钮留点位置
+        customStyle={{ margin: 0, padding: ".2rem .2rem" }}
+      >
+        {codeString}
+      </SyntaxHighlighter>
     </div>
   );
-});
-
-export default CodeBlock;
+}

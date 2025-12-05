@@ -9,12 +9,13 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@fontsource/geist": "^5.2.8",
+    "@fontsource/geist-mono": "^5.2.7",
     "next": "16.0.6",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-markdown": "^10.1.0",
-    "rehype-highlight": "^7.0.2",
-    "rehype-raw": "^7.0.0",
+    "react-syntax-highlighter": "^16.1.0",
     "remark-gfm": "^4.0.1",
     "sass": "^1.94.2"
   },
@@ -23,6 +24,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "eslint": "^9",
     "eslint-config-next": "16.0.6",
     "tailwindcss": "^4",

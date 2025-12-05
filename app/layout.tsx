@@ -1,18 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 // ✅ 关键点 1：必须引入 Script 组件
 import Script from "next/script";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -27,9 +16,7 @@ export default function RootLayout({
   return (
     // ✅ 核心修改：添加 suppressHydrationWarning 属性
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className="font-sans antialiased">
         {/* ✅ 关键点 3：Script 标签放在 body 内部 */}
         {/* strategy="beforeInteractive" 保证在页面水合前就执行，防止字体大小跳动 */}
         <Script id="rem-script" strategy="beforeInteractive">
