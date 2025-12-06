@@ -1,10 +1,9 @@
-// components/CodeBlock.tsx
-"use client"; // ✅ 必须标记为客户端组件
+"use client";
 
 import { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
-import styles from "./CodeBlock.module.scss"; // 下一步我们会创建这个样式文件
+import styles from "./CodeBlock.module.scss";
 
 interface CodeBlockProps {
   node?: any;
@@ -21,31 +20,40 @@ export default function CodeBlock({
 }: CodeBlockProps) {
   const [isCopied, setIsCopied] = useState(false);
 
-  // 1. 如果是内联代码，直接渲染普通 code 标签
-  if (inline) {
+  // 1. 获取代码内容并去除末尾换行
+  const codeString = String(children).replace(/\n$/, "");
+
+  // 2. 检测是否指定了语言 (例如 language-js)
+  const match = /language-(\S+)/.exec(className || "");
+  let lang = match ? match[1] : "";
+
+  // 3. 🛡️【核心修复逻辑】智能判断是否为行内代码
+  // 满足以下任一条件即视为行内代码：
+  // A. props.inline 明确为 true
+  // B. 且 (没有指定语言 AND 内容里没有换行符) -> 即使 parser 弄错了，我们也强制把它按 inline 渲染
+  const isInline = inline || (!match && !codeString.includes("\n"));
+
+  // --- 分支 A: 渲染行内代码 (针对 `css-loader` 等短语) ---
+  if (isInline) {
     return (
-      <code className={className} {...props}>
+      <code className={`${styles.inlineCode} ${className || ""}`} {...props}>
         {children}
       </code>
     );
   }
 
-  // 2. 解析语言逻辑 (从你原来的代码移动到这里)
-  const match = /language-(\S+)/.exec(className || "");
-  let lang = match ? match[1] : "text";
+  // --- 分支 B: 渲染代码块 (针对大段代码) ---
+
+  // 清理语言名称中的多余字符
   if (lang) {
     lang = lang.replace(/[:{].*/, "");
   }
 
-  // 3. 获取代码文本
-  const codeString = String(children).replace(/\n$/, "");
-
-  // 4. 复制代码的函数
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(codeString);
       setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000); // 2秒后恢复
+      setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy!", err);
     }
@@ -53,7 +61,6 @@ export default function CodeBlock({
 
   return (
     <div className={styles.codeBlockWrapper}>
-      {/* 复制按钮 */}
       <button
         onClick={handleCopy}
         className={styles.copyButton}
@@ -62,14 +69,12 @@ export default function CodeBlock({
         {isCopied ? "Copied! ✅" : "Copy 📋"}
       </button>
 
-      {/* 高亮组件 */}
       <SyntaxHighlighter
         {...props}
         style={dracula}
-        language={lang}
+        language={lang || "text"} // 如果没有语言，默认为 text
         PreTag="div"
-        // 稍微调整一下样式，给右上角的按钮留点位置
-        customStyle={{ margin: 0, padding: ".2rem .2rem" }}
+        customStyle={{ margin: 0, padding: ".2rem" }}
       >
         {codeString}
       </SyntaxHighlighter>

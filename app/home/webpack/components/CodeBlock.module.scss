@@ -39,3 +39,13 @@
     transform: translateY(1px);
   }
 }
+
+.inlineCode {
+  background-color: rgba(175, 184, 193, 0.2);
+  color: #24292f; // 如果是暗黑模式网页，建议改为 #e6edf3
+  padding: 0.2em 0.4em;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 0.85em;
+  vertical-align: baseline;
+}

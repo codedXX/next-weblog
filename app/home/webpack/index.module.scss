@@ -4,14 +4,18 @@
   font-size: 0.16rem;
   display: flex;
   .menuWrapper {
-    width: 10%;
+    width: 15%;
     height: 100%;
-    background-color: red;
+    overflow: auto;
+    border-right: 1px solid #eaecef;
+    padding: 0 0.2rem;
+    // background-color: red;
   }
   .mdContainer {
-    width: 90%;
+    width: 85%;
     height: 100%;
     padding: 0 2%;
+    // overflow: auto;
   }
 }
 
