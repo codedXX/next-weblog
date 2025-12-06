@@ -50,12 +50,19 @@ export default function Toc({ toc }: { toc: TocItem[] }) {
   ) => {
     e.preventDefault();
     const element = document.getElementById(slug);
-    if (element) {
-      // 使用 scrollIntoView，它会自动在最近的可滚动祖先容器内滚动
-      // 这样无论滚动容器是 window 还是 .mdContainer 都能正常工作
-      element.scrollIntoView({
+    const container = scrollContainerRef.current;
+    
+    if (element && container) {
+      // 直接操作 .mdContainer 的 scrollTop，避免 scrollIntoView 导致外层容器滚动
+      // 计算目标元素相对于滚动容器的位置
+      const containerRect = container.getBoundingClientRect();
+      const elementRect = element.getBoundingClientRect();
+      const offsetTop = elementRect.top - containerRect.top + container.scrollTop;
+      
+      // 平滑滚动到目标位置
+      container.scrollTo({
+        top: offsetTop,
         behavior: "smooth",
-        block: "start",
       });
 
       // 立即设置高亮，不等滚动结束
