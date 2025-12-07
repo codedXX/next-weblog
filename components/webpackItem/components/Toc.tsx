@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import styles from "./Toc.module.scss"; // 稍后创建样式
-import { TocItem } from "@/utils/get-toc";
+import { TocItem } from "../utils/get-toc";
 
 export default function Toc({ toc }: { toc: TocItem[] }) {
   const [activeId, setActiveId] = useState<string>("");
@@ -11,6 +11,9 @@ export default function Toc({ toc }: { toc: TocItem[] }) {
   const scrollContainerRef = useRef<Element | null>(null);
 
   useEffect(() => {
+    // 如果没有目录数据，直接返回
+    if (!toc || toc.length === 0) return;
+
     // 获取实际的滚动容器 (.mdContainer)
     // 由于是 CSS Module，需要通过选择器或者类名的部分匹配来查找
     const mdContainer = document.querySelector('[class*="mdContainer"]');
@@ -34,14 +37,21 @@ export default function Toc({ toc }: { toc: TocItem[] }) {
       }
     );
 
-    // 监听 Markdown 内容区里的所有标题
-    const headings = document.querySelectorAll(
-      ".markdown-body h1, .markdown-body h2, .markdown-body h3"
-    );
-    headings.forEach((h) => observer.observe(h));
+    // 延迟执行，确保 DOM 已渲染完成
+    const timer = setTimeout(() => {
+      // 监听 Markdown 内容区里的所有标题
+      const headings = document.querySelectorAll(
+        '[class*="mdContainer"] h1, [class*="mdContainer"] h2, [class*="mdContainer"] h3'
+      );
+      headings.forEach((h) => observer.observe(h));
+    }, 100);
 
-    return () => observer.disconnect();
-  }, []);
+    // 清理函数：断开 observer 并清除定时器
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
+  }, [toc]); // 依赖 toc，当目录数据改变时重新绑定
 
   // 处理点击平滑滚动
   const handleClick = (
