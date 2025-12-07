@@ -20,9 +20,35 @@
   .catalogList {
     width: 10%;
     height: 100%;
+    padding: 0.1rem;
+    overflow: auto;
     .catlog {
       cursor: pointer;
+      padding: 0.08rem 0.12rem;
+      margin-bottom: 0.04rem;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      font-size: 0.14rem;
+      color: #666;
+      &:hover {
+        background-color: #f0f5ff;
+        color: #1890ff;
+      }
+      &.active {
+        background-color: #e6f7ff;
+        color: #1890ff;
+        font-weight: 500;
+        border-left: 3px solid #1890ff;
+      }
     }
+  }
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    font-size: 0.16rem;
+    color: #999;
   }
 }
 
@@ -48,7 +74,7 @@
 // ✅ 2. 针对有序列表 ( 1. )
 :global(ol) {
   list-style-type: decimal; // 恢复数字 (1, 2, 3)
-  padding-left: 1.5rem;
+  padding-left: 0.5rem;
   margin: 1em 0;
 }
 

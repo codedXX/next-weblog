@@ -19,7 +19,7 @@ export default function HomeLayout({
   const [tagList, setTagList] = useState<tagListType[]>([
     { value: 1, label: "概述", path: "/home/overview" },
     { value: 2, label: "Vue", path: "/home/vue" }, // 假设你还有其他页面
-    { value: 3, label: "Webpack", path: "/home/webpack" },
+    { value: 3, label: "Webpack", path: "/home/webpackBase" },
     { value: 4, label: "React", path: "/home/react" },
     { value: 5, label: "小程序", path: "/home/miniapp" },
     { value: 6, label: "Java", path: "/home/java" },

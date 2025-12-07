@@ -1,0 +1,130 @@
+.containerBox {
+  width: 100%;
+  height: 100%;
+  font-size: 0.16rem;
+  display: flex;
+  .menuWrapper {
+    width: 15%;
+    height: 100%;
+    overflow: auto;
+    border-right: 1px solid #eaecef;
+    padding: 0 0.2rem;
+    // background-color: red;
+  }
+  .mdContainer {
+    width: 75%;
+    height: 100%;
+    padding: 0 2%;
+    overflow: auto;
+  }
+  .catalogList {
+    width: 10%;
+    height: 100%;
+    padding: 0.1rem;
+    overflow: auto;
+    .catlog {
+      cursor: pointer;
+      padding: 0.08rem 0.12rem;
+      margin-bottom: 0.04rem;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      font-size: 0.14rem;
+      color: #666;
+      &:hover {
+        background-color: #f0f5ff;
+        color: #1890ff;
+      }
+      &.active {
+        background-color: #e6f7ff;
+        color: #1890ff;
+        font-weight: 500;
+        border-left: 3px solid #1890ff;
+      }
+    }
+  }
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    font-size: 0.16rem;
+    color: #999;
+  }
+}
+
+// 意思：选中 code，但前提是它没有以 "language-" 开头的 class
+:global(code:not([class*="language-"])) {
+  background-color: #f3f4f6;
+  color: #ef4444;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.9em;
+  word-break: break-word;
+}
+
+// ✅ 1. 针对无序列表 ( - 或 * )
+// 使用 :global 是因为 markdown 生成的标签没有 hash 类名
+:global(ul) {
+  list-style-type: disc; // 恢复实心圆点
+  padding-left: 0.5rem; // 恢复左侧缩进，否则圆点会在屏幕外
+  margin: 1em 0; // 上下留白
+}
+
+// ✅ 2. 针对有序列表 ( 1. )
+:global(ol) {
+  list-style-type: decimal; // 恢复数字 (1, 2, 3)
+  padding-left: 0.5rem;
+  margin: 1em 0;
+}
+
+// ✅ 3. 针对列表项，增加一点行间距，更好看
+:global(li) {
+  margin-bottom: 0.25em;
+  line-height: 1.6;
+}
+
+// ✅ 4. 针对嵌套列表 (列表里的列表)
+:global(ul ul),
+:global(ol ul),
+:global(ul ol),
+:global(ol ol) {
+  margin: 0.5em 0;
+  padding-left: 0.5rem; // 增加缩进
+  list-style-type: circle; // 二级列表用空心圆
+}
+
+// :global(code[class*="language-"]) {
+:global(code) {
+  span {
+    color: white;
+  }
+}
+:global(h1) {
+  font-size: 0.4rem;
+  font-weight: bold;
+  line-height: 2;
+}
+
+:global(h2) {
+  font-size: 0.3rem;
+  font-weight: bold;
+  line-height: 2;
+}
+
+:global(h3) {
+  font-size: 0.24rem;
+  font-weight: bold;
+  line-height: 2;
+}
+
+:global(h4) {
+  font-size: 0.2rem;
+  font-weight: bold;
+  line-height: 2;
+}
+:global(h5) {
+  font-size: 0.18rem;
+  font-weight: bold;
+  line-height: 2;
+}
