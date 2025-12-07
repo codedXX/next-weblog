@@ -12,10 +12,17 @@
     // background-color: red;
   }
   .mdContainer {
-    width: 85%;
+    width: 75%;
     height: 100%;
     padding: 0 2%;
     overflow: auto;
+  }
+  .catalogList {
+    width: 10%;
+    height: 100%;
+    .catlog {
+      cursor: pointer;
+    }
   }
 }
 

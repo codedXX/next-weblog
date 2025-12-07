@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
+// 使用 CJS 版本代替 ESM，减少动态加载造成的闪烁
+import { dracula } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import styles from "./CodeBlock.module.scss";
 
 interface CodeBlockProps {
