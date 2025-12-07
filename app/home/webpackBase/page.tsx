@@ -27,6 +27,6 @@ const catalogList: CatalogItem[] = [
   { value: "summary", label: "总结" },
 ];
 const WebpackBase = () => {
-  return <WebpackItem catalogList={catalogList} />;
+  return <WebpackItem catalogList={catalogList} category="base" />;
 };
 export default WebpackBase;

@@ -1,7 +1,7 @@
 "use client";
-// app/home/webpack/page.tsx
-// 优化：点击目录（catlog）时动态切换 md 文档
-// 使用 URL hash 持久化当前文档状态
+// components/webpackItem/page.tsx
+// 通用 Webpack 文档展示组件
+// 支持基础、高级、项目三种类型
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import styles from "./index.module.scss";
@@ -17,23 +17,47 @@ type CatalogItem = {
   value: string;
   label: string;
 };
+
+// 文档类型
+type CategoryType = "base" | "senior" | "project";
+
 interface WebpackItemProps {
   catalogList: CatalogItem[];
+  // 文档类型：base=基础, senior=高级, project=项目
+  category?: CategoryType;
+  // 默认文档名（可选，根据 category 自动设置）
+  defaultDoc?: string;
 }
 
-export default function WebpackPage({ catalogList }: WebpackItemProps) {
+// 各类型的默认文档
+const defaultDocMap: Record<CategoryType, string> = {
+  base: "preface",
+  senior: "README",
+  project: "react-cli",
+};
+
+export default function WebpackItem({
+  catalogList,
+  category = "base",
+  defaultDoc,
+}: WebpackItemProps) {
+  // 获取该类型的默认文档名
+  const getDefaultDoc = (): string => {
+    return defaultDoc || defaultDocMap[category];
+  };
+
   // 获取有效的文档名（验证是否在列表中）
   const getValidDocName = (name: string | null): string => {
     if (name && catalogList.some((item) => item.value === name)) {
       return name;
     }
-    return "preface"; // 默认值
+    return getDefaultDoc();
   };
 
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // 从 URL 参数读取当前文档，如果没有则默认 "preface"
+  // 从 URL 参数读取当前文档
   const docFromUrl = searchParams.get("doc");
   const [currentDoc, setCurrentDoc] = useState<string>(() =>
     getValidDocName(docFromUrl)
@@ -48,29 +72,35 @@ export default function WebpackPage({ catalogList }: WebpackItemProps) {
   const mdContainerRef = useRef<HTMLDivElement>(null);
 
   // 获取 md 文件内容
-  const fetchMarkdown = useCallback(async (fileName: string) => {
-    setLoading(true);
-    try {
-      const response = await fetch(`/api/markdown?file=${fileName}`);
-      if (!response.ok) {
-        throw new Error("获取文档失败");
+  const fetchMarkdown = useCallback(
+    async (fileName: string) => {
+      setLoading(true);
+      try {
+        // 使用 category 参数指定 md 目录
+        const response = await fetch(
+          `/api/markdown?file=${fileName}&category=${category}`
+        );
+        if (!response.ok) {
+          throw new Error("获取文档失败");
+        }
+        const data = await response.json();
+        setMdContent(data.content);
+        // 生成目录数据
+        setTocData(getToc(data.content));
+        // 滚动到顶部
+        if (mdContainerRef.current) {
+          mdContainerRef.current.scrollTop = 0;
+        }
+      } catch (error) {
+        console.error("加载 Markdown 失败:", error);
+        setMdContent("# 加载失败\n\n文档加载失败，请稍后重试。");
+        setTocData([]);
+      } finally {
+        setLoading(false);
       }
-      const data = await response.json();
-      setMdContent(data.content);
-      // 生成目录数据
-      setTocData(getToc(data.content));
-      // 滚动到顶部
-      if (mdContainerRef.current) {
-        mdContainerRef.current.scrollTop = 0;
-      }
-    } catch (error) {
-      console.error("加载 Markdown 失败:", error);
-      setMdContent("# 加载失败\n\n文档加载失败，请稍后重试。");
-      setTocData([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [category]
+  );
 
   // 初始化加载第一个文档
   useEffect(() => {

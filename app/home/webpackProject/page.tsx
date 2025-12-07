@@ -10,9 +10,9 @@ type CatalogItem = {
 const catalogList: CatalogItem[] = [
   { value: "react-cli", label: "React脚手架" },
   { value: "vue-cli", label: "Vue脚手架" },
-  { value: "summary", label: "总结" },
+  // { value: "summary", label: "总结" },
 ];
-const WebpackSenior = () => {
-  return <WebpackItem catalogList={catalogList} />;
+const WebpackProject = () => {
+  return <WebpackItem catalogList={catalogList} category="project" />;
 };
-export default WebpackSenior;
+export default WebpackProject;
