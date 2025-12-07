@@ -1,6 +1,6 @@
-import Image from "next/image";
-import HomePage from "./home/layout";
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return <HomePage />;
+  // 访问根路径时重定向到 /home/overview
+  redirect("/home/overview");
 }

@@ -1,4 +1,8 @@
+import { Suspense } from "react";
 import WebpackItem from "@/components/webpackItem/page";
+
+// 禁用静态预渲染，因为使用了 useSearchParams
+export const dynamic = "force-dynamic";
 
 // 目录项类型
 type CatalogItem = {
@@ -26,7 +30,12 @@ const catalogList: CatalogItem[] = [
   { value: "minifyHtml", label: "Html压缩" },
   { value: "summary", label: "总结" },
 ];
-const WebpackBase = () => {
-  return <WebpackItem catalogList={catalogList} category="base" />;
-};
-export default WebpackBase;
+
+export default function WebpackBase() {
+  return (
+    <Suspense fallback={<div>加载中...</div>}>
+      <WebpackItem catalogList={catalogList} category="base" />
+    </Suspense>
+  );
+}
+
