@@ -92,7 +92,6 @@ export default function WebpackItem({
           mdContainerRef.current.scrollTop = 0;
         }
       } catch (error) {
-        console.error("加载 Markdown 失败:", error);
         setMdContent("# 加载失败\n\n文档加载失败，请稍后重试。");
         setTocData([]);
       } finally {
